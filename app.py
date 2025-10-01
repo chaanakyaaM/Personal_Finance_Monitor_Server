@@ -59,12 +59,12 @@ def login():
         })
 
     if not user:
-        return jsonify({"error": "User does not exits"},400)
+        return jsonify({"error": "User does not exits"}),400
     
     stored_hash = user[2]  # id=0, username=1, password_hash=2
     
     if not check_password_hash(stored_hash, password_hash):
-        return jsonify({""
+        return jsonify({
         "error" : "Invalid password",
         "auth" : False}),401
 

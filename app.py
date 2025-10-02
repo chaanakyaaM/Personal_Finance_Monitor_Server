@@ -47,11 +47,11 @@ def register():
 def login():
     data = request.json
     username = data.get("username")
-    password_hash = data.get("password_hash")
+    password = data.get("password_hash")
 
     user = userDAO.get_user(username)
 
-    if username == "admin" and check_password_hash(user[2], password_hash):
+    if username == "admin" and check_password_hash(user[2], password):
         return jsonify({
             "message" : "Admin login successful",
             "auth" : False,
@@ -63,7 +63,7 @@ def login():
     
     stored_hash = user[2]  # id=0, username=1, password_hash=2
     
-    if not check_password_hash(stored_hash, password_hash):
+    if not check_password_hash(stored_hash, password):
         return jsonify({
         "error" : "Invalid password",
         "auth" : False}),401
@@ -101,22 +101,28 @@ def get_transaction(user_id):
 
 @app.route("/output",methods=["GET"])
 def output():
-    output1 = adminDAO.output("users")
-    output2 = adminDAO.output("transactions")
+    try:
+        output1 = adminDAO.output("users")
+        output2 = adminDAO.output("transactions")
 
-    desc1 = adminDAO.desc("users")
-    desc2 = adminDAO.desc("transactions")
+        desc1 = adminDAO.desc("users")
+        desc2 = adminDAO.desc("transactions")
 
-    return jsonify({
-        "labels" : {
-            "users" : desc1,
-            "transactions" : desc2,
-        },
-        "values" : {
-        "users" : output1,
-        "transactions" : output2,
-        }
-    })
+        return jsonify({
+            "labels" : {
+                "users" : desc1,
+                "transactions" : desc2,
+            },
+            "values" : {
+            "users" : output1,
+            "transactions" : output2,
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            "error" : f"error at DB level {str(e)}"
+        })
+
 
 @app.route("/analytics/<int:user_id>", methods=["GET"])
 def analytics(user_id):

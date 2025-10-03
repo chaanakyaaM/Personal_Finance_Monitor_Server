@@ -41,7 +41,7 @@ class UserDAO:
 
                 users_deleted = cur.rowcount
 
-                return {"users_deleted" : users_deleted}
+                return {"deleted_count" : int(users_deleted) + int(transactions_deleted)}
         
         except Exception as e:
             return str(e)

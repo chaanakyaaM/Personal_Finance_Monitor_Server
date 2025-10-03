@@ -170,11 +170,11 @@ def delete_transaction(user_id, transaction_id):
 def delete_user(user_id):
     try:
         res = userDAO.delete_user(int(user_id))
-        if res:
-            if res.get("users_deleted") > 0:
-                return jsonify({
-                    "message" : "User deleted successfully"
-                }),200
+        if res.get("deleted_count") > 0:
+            return jsonify({
+                "message" : "User deleted successfully"
+            }),200
+            
     except Exception as e:
         return jsonify({
             "error" : f"Error at DB level: {str(e)}"

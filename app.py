@@ -39,7 +39,7 @@ def register():
     
     except Exception as e:
         return jsonify({
-            "message":str(e)
+            "error":f"Error at DB level: {str(e)}"
         })
 
 
@@ -91,7 +91,7 @@ def transaction():
     
     except Exception as e:
         return jsonify({
-            "message" : f"error: {str(e)}"
+            "error" : f"Error at DB level: {str(e)}"
         })
 
 @app.route("/transaction/<int:user_id>", methods = ["GET"])
@@ -154,17 +154,32 @@ def analytics(user_id):
     
 @app.route("/delete_transaction/<int:user_id>/<int:transaction_id>", methods = ["DELETE"])
 def delete_transaction(user_id, transaction_id):
-    res = transactionsDAO.delete_transaction(user_id, transaction_id)
+    try:
+        res = transactionsDAO.delete_transaction(user_id, transaction_id)
 
-    if res:
+        if res:
+            return jsonify({
+                "message" : "Transaction deleted successfully"
+            })
+    except Exception as e:
         return jsonify({
-            "message" : "Transaction deleted successfully"
+            "error" : f"Error at DB level: {str(e)}"
         })
-    
-    else:
+
+@app.route("/delete_user/<int:user_id>", methods = ["DELETE"])
+def delete_user(user_id):
+    try:
+        res = userDAO.delete_user(int(user_id))
+        if res:
+            if res.get("users_deleted") > 0:
+                return jsonify({
+                    "message" : "User deleted successfully"
+                }),200
+    except Exception as e:
         return jsonify({
-            "error" : "Error deleting transaction "+ res
+            "error" : f"Error at DB level: {str(e)}"
         })
+
 
 if __name__ == "__main__":
     app.run(debug = True, host = "0.0.0.0", port = 5000)

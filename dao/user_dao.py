@@ -1,7 +1,7 @@
 from .dbconfig import get_cursor
 
 class UserDAO:
-    def get_user(self,username):
+    def get_user(self, username):
         try:
             with get_cursor() as cur:
                 cur.execute("SELECT * FROM users WHERE username = %s", (username,))
@@ -13,7 +13,7 @@ class UserDAO:
             return str(e)
 
 
-    def create_user(self,username, password_hash):
+    def create_user(self, username, password_hash):
         try:
             with get_cursor() as cur:
                 cur.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s) RETURNING id", (username, password_hash))
@@ -23,3 +23,26 @@ class UserDAO:
             
         except Exception as e:
             return str(e)
+
+    def delete_user(self, user_id):
+        try:
+            with get_cursor() as cur:
+                cur.execute(
+                "DELETE FROM transactions WHERE user_id = %s;",
+                (user_id, ) 
+                )
+
+                transactions_deleted = cur.rowcount
+
+                cur.execute(
+                    "DELETE FROM users WHERE id = %s;",
+                    (user_id, )
+                )
+
+                users_deleted = cur.rowcount
+
+                return {"users_deleted" : users_deleted}
+        
+        except Exception as e:
+            return str(e)
+            

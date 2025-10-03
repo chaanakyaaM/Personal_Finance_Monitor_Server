@@ -8,15 +8,18 @@ load_dotenv()
 password = os.getenv("DB_PASSWORD")
 dbname = os.getenv("DB_NAME")
 user = os.getenv("DB_USER")
+host = os.getenv("DB_HOST")
+port = os.getenv("DB_PORT")
 
 # DAO (Data Access Object) layer : Seperates server logic from DB logic
+# protocol://user:password@host:port/database
 
 DB_CONFIG = {
     "dbname" : dbname,  
     "user" : user,
     "password" : password,
-    "host" : "localhost",
-    "port" : "5432"
+    "host" : host,
+    "port" : port
 }
 
 @contextmanager

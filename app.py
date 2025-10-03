@@ -96,8 +96,13 @@ def transaction():
 
 @app.route("/transaction/<int:user_id>", methods = ["GET"])
 def get_transaction(user_id):
-    transactions = transactionsDAO.get_transaction(user_id)
-    return jsonify(transactions)
+    try:
+        transactions = transactionsDAO.get_transaction(user_id)
+        return jsonify(transactions)
+    except Exception as e:
+        return jsonify({
+            "error" : str(e)
+        })
 
 @app.route("/output",methods=["GET"])
 def output():
